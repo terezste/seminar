@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,7 +35,7 @@ namespace BattleshipGame
 
             for (int x = 1; x <= rows; x++)
             {
-                //tady jsem si poradila, nevedela jsem, jak udelat, aby se mi vypsaly souradnice dle poctu radku a sloupcu, ktere si uzivatel sam navoli https://chatgpt.com/share/675eaaf5-8700-8012-aef2-81e7750c8f9c
+                //tady jsem si poradila, nevedela jsem, jak udelat, aby se mi vypsaly pismenkove souradnice dle poctu sloupcu, ktere si uzivatel sam navoli https://chatgpt.com/share/675eaaf5-8700-8012-aef2-81e7750c8f9c
 
                 field[0, x] = Convert.ToString((char)('A' + x - 1) + " ");
             }        
@@ -53,11 +54,14 @@ namespace BattleshipGame
 
         static void PlaceShip(int shipLenght, string shipSymbol, string message, string[,] field)
         {
-            string shipCoordinates = "";
-            int xCoordinate = 0;
-            int yCoordinate = 0;
+            string shipCoordinates;
+            int xCoordinate;
+            int yCoordinate;
             while (true)
             {
+                shipCoordinates = "";
+                xCoordinate = 0;
+                yCoordinate = 0;
                 Console.Write(message);
                 shipCoordinates = Console.ReadLine();
 
@@ -71,13 +75,76 @@ namespace BattleshipGame
 
                 for (int i = 0; i < field.GetLength(0); i++)
                 {
-                    if (field[i, 0] == shipCoordinates.Substring(0, 1).ToUpper())
+                    if (field[0, i] == shipCoordinates.Substring(0, 1).ToUpper() + " ")
                     {
                         xCoordinate = i;
                         break;
                     }
                 }
-                if (xCoordinate == 0)
+                if (xCoordinate == 0)   
+                {
+                    Console.WriteLine("Invalid input");
+                    continue;
+                }
+
+                //kontroluji, jestli jsou zadane souradnice y validni
+
+                int.TryParse(shipCoordinates.Substring(1), out yCoordinate);
+                if (yCoordinate == 0 || yCoordinate > field.GetLength(1))
+                {
+                    Console.WriteLine("Invalid input");
+                    continue;
+                }
+
+                if (xCoordinate + shipLenght > field.GetLength(0))
+                {
+                    Console.WriteLine("Invalid input. Stay within the field");
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            for (int i = 0; i < shipLenght; i++)
+            {
+                field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
+            }
+            PrintField(field);
+        }
+
+        /*static int PlayerRound() 
+        {
+            Console.WriteLine("Your turn. Enter coordinates to attack.");
+            PrintField(playerField);
+            string shipCoordinates;
+            int xCoordinate;
+            int yCoordinate;
+            while (true)
+            {
+                shipCoordinates = "";
+                xCoordinate = 0;
+                yCoordinate = 0;
+                Console.Write(message);
+                shipCoordinates = Console.ReadLine();
+
+                //kontroluji, jestli jsou zadane souradnice x validni
+
+                if (!(shipCoordinates.Length == 2 || shipCoordinates.Length == 3))
+                {
+                    Console.WriteLine("Invalid input");
+                    continue;
+                }
+
+                for (int i = 0; i < field.GetLength(0); i++)
+                {
+                    if (field[0, i] == shipCoordinates.Substring(0, 1).ToUpper() + " ")
+                    {
+                        xCoordinate = i;
+                        break;
+                    }
+                }
+                if (xCoordinate == 0)   
                 {
                     Console.WriteLine("Invalid input");
                     continue;
@@ -98,15 +165,10 @@ namespace BattleshipGame
             }
             for (int i = 0; i < shipLenght; i++)
             {
-                field[xCoordinate + 1, yCoordinate + 1] = shipSymbol + " ";
+                field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
             }
             PrintField(field);
         }
-
-        /*static int PlayerRound() 
-        {
-            Console.WriteLine("Your turn. Enter coordinates to attack.");
-            PrintField(playerField);
         }
 
         static int ComputerRound()
@@ -119,25 +181,52 @@ namespace BattleshipGame
         {
             Console.WriteLine("Welcome to the Battleship game");
 
-            //navrhuji pole a kontroluji vstup
+            //navrhuji pole a kontroluji vstup, zaroven kontroluji, jestli pole neni moc velke nebo moc male
 
-            int columns = 0;
-            int rows = 0;
+            int columns;
+            int rows;
             int indexOfAsterisk;
-            while ((columns == 0 || rows == 0))
+
+            while (true)
             {
+                columns = 0;
+                rows = 0;
+                indexOfAsterisk = 0;
+
                 Console.Write("Choose the size of your field (e.g. 10*12): ");
                 string fieldSizeInput = Console.ReadLine();
+
                 if (fieldSizeInput.Contains("*"))
                 {
                     indexOfAsterisk = fieldSizeInput.IndexOf("*");
                     int.TryParse(fieldSizeInput.Substring(0, indexOfAsterisk), out columns);
                     int.TryParse(fieldSizeInput.Substring(indexOfAsterisk + 1), out rows);
                 }
-                if (columns == 0 || rows == 0)
+                else
                 {
                     Console.WriteLine("Invalid input");
-                }                   
+                    continue;
+                }
+
+                if (columns > 26 || rows > 26)
+                {
+                    Console.WriteLine("Field is too big");
+                    continue;
+                }
+                else if (columns < 5 || rows < 5)
+                {
+                    Console.WriteLine("Field is too small");
+                    continue;
+                }
+                else if (columns == 0 || rows == 0)
+                {
+                    Console.WriteLine("Invalid input");
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
             }
             
             //vytvorim si vsechna pole, ktera budu pouzivat (+ 1, protoze mam jeste popisky)
