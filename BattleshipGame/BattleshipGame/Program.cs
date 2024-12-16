@@ -81,7 +81,7 @@ namespace BattleshipGame
                         break;
                     }
                 }
-                if (xCoordinate == 0)   
+                if (xCoordinate == 0)
                 {
                     Console.WriteLine("Invalid input");
                     continue;
@@ -101,15 +101,33 @@ namespace BattleshipGame
                     Console.WriteLine("Invalid input. Stay within the field");
                     continue;
                 }
+
+                //zadavam podminky, aby se lode neprekryvaly
+
+                bool shipsOverlapping = false;
+
+                for (int i = 0; i < shipLenght; i++)
+                {
+                    if (field[yCoordinate, xCoordinate + i] == "- ")
+                    {
+                        field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
+                    }
+                    else
+                    {
+                        shipsOverlapping = true;
+                        break;
+                    }
+                }
+                if (shipsOverlapping == true)
+                {
+                    Console.WriteLine("Invalid input. Ships cannot overlap");
+                    continue;
+                }
                 else
                 {
                     break;
                 }
-            }
-            for (int i = 0; i < shipLenght; i++)
-            {
-                field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
-            }
+            }  
             PrintField(field);
         }
 
