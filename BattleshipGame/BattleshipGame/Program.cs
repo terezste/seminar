@@ -10,6 +10,7 @@ namespace BattleshipGame
     {
         static void PrintField(string[,] field)
         {
+            Console.WriteLine("");
             for (int i = 0; i < field.GetLength(0); i++)
             {
                 for (int j = 0; j < field.GetLength(1); j++)
@@ -53,8 +54,8 @@ namespace BattleshipGame
         static void PlaceShip(int shipLenght, string shipSymbol, string message, string[,] field)
         {
             string shipCoordinates = "";
-            string xCoordinate = "";
-            string yCoordinate = "";
+            int xCoordinate = 0;
+            int yCoordinate = 0;
             while (true)
             {
                 Console.Write(message);
@@ -62,20 +63,26 @@ namespace BattleshipGame
 
                 //kontroluji, jestli jsou zadane souradnice validni
 
-                xCoordinate = Convert.ToString(shipCoordinates[0]);
-                if (Convert.ToInt32(xCoordinate) > field.GetLength(1))
+                if (shipCoordinates.Length != 2 || shipCoordinates.Length != 3)
                 {
                     Console.WriteLine("Invalid input");
+                    continue;
                 }
-                else
-                {
-                    break;
-                }
-            }
 
-            while (yCoordinate == "")
-            {
-                for (int i = 0; i < field.GetLength(0); i++)
+                int.TryParse(shipCoordinates.Substring(1), out yCoordinate);
+                if (yCoordinate == 0)
+                {
+                    Console.WriteLine("Invalid input");
+                    continue;
+                }
+
+                xCoordinate = shipCoordinates.Substring(0, 1);
+                if (Convert.ToInt32(xCoordinate) > field.GetLength(1))
+                {
+                    Console.WriteLine("Invalid input. Stay within the field");
+                    continue;
+                }
+                for (int i = 0; i < field.GetLength(1); i++)
                 {
                     if (field[i, 0] == (Convert.ToString(shipCoordinates[1])).ToUpper())
                     {
@@ -83,9 +90,17 @@ namespace BattleshipGame
                         break;
                     }
                 }
+                if (yCoordinate == "")
+                {
+                    Console.WriteLine("Invalid input");
+                    continue;
+                }
 
             }
-            field[Convert.ToChar(xCoordinate), Convert.ToChar(yCoordinate)] = shipSymbol + " ";
+            for (int i = 0; i < shipLenght; i++)
+            {
+                field[Convert.ToInt32(xCoordinate) + 1, Convert.ToInt32(yCoordinate)] = shipSymbol + " ";
+            }
             PrintField(field);
         }
 
@@ -142,15 +157,14 @@ namespace BattleshipGame
 
             //rozmistuji sve lode
 
-            Console.WriteLine("Time to place your ships. You have 5 ships.\nEnter coordinates of the left corner of the ship (e.g. 5b)");
+            Console.WriteLine("Time to place your ships. You have 5 ships.\nEnter coordinates of the left corner of the ship (e.g. b5)");
 
             PlaceShip(5, "A", "Place an Aircraft Carrier (A, 1*5): ", playerField);
             PlaceShip(4, "B", "Place a Battleship (B, 1*4): ", playerField);
             PlaceShip(3, "C", "Place a Cruiser (C, 1*3): ", playerField);
             PlaceShip(3, "S", "Place a Submarine (S, 1*3): ", playerField);
             PlaceShip(2, "D", "Place a Destroyer (D, 1*2): ", playerField);
-
-           
+ 
         }
     }
 }
