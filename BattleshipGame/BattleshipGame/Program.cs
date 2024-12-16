@@ -61,45 +61,44 @@ namespace BattleshipGame
                 Console.Write(message);
                 shipCoordinates = Console.ReadLine();
 
-                //kontroluji, jestli jsou zadane souradnice validni
+                //kontroluji, jestli jsou zadane souradnice x validni
 
-                if (shipCoordinates.Length != 2 || shipCoordinates.Length != 3)
+                if (!(shipCoordinates.Length == 2 || shipCoordinates.Length == 3))
                 {
                     Console.WriteLine("Invalid input");
                     continue;
                 }
 
-                int.TryParse(shipCoordinates.Substring(1), out yCoordinate);
-                if (yCoordinate == 0)
+                for (int i = 0; i < field.GetLength(0); i++)
                 {
-                    Console.WriteLine("Invalid input");
-                    continue;
-                }
-
-                xCoordinate = shipCoordinates.Substring(0, 1);
-                if (Convert.ToInt32(xCoordinate) > field.GetLength(1))
-                {
-                    Console.WriteLine("Invalid input. Stay within the field");
-                    continue;
-                }
-                for (int i = 0; i < field.GetLength(1); i++)
-                {
-                    if (field[i, 0] == (Convert.ToString(shipCoordinates[1])).ToUpper())
+                    if (field[i, 0] == shipCoordinates.Substring(0, 1).ToUpper())
                     {
-                        yCoordinate = Convert.ToString(i) + 1;
+                        xCoordinate = i;
                         break;
                     }
                 }
-                if (yCoordinate == "")
+                if (xCoordinate == 0)
                 {
                     Console.WriteLine("Invalid input");
                     continue;
                 }
 
+                //kontroluji, jestli jsou zadane souradnice y validni
+
+                int.TryParse(shipCoordinates.Substring(1), out yCoordinate);
+                if (yCoordinate == 0 || yCoordinate > field.GetLength(1))
+                {
+                    Console.WriteLine("Invalid input");
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
             }
             for (int i = 0; i < shipLenght; i++)
             {
-                field[Convert.ToInt32(xCoordinate) + 1, Convert.ToInt32(yCoordinate)] = shipSymbol + " ";
+                field[xCoordinate + 1, yCoordinate + 1] = shipSymbol + " ";
             }
             PrintField(field);
         }
@@ -127,7 +126,7 @@ namespace BattleshipGame
             int indexOfAsterisk;
             while ((columns == 0 || rows == 0))
             {
-                Console.Write("Choose the size of your field (e.g. 10*10): ");
+                Console.Write("Choose the size of your field (e.g. 10*12): ");
                 string fieldSizeInput = Console.ReadLine();
                 if (fieldSizeInput.Contains("*"))
                 {
