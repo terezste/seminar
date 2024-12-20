@@ -93,8 +93,10 @@ namespace BattleshipGame
                 if (yCoordinate == 0 || yCoordinate > field.GetLength(1))
                 {
                     Console.WriteLine("Invalid input");
-                    continue;
+                    continue;   
                 }
+
+                //kontroluji, jestli lod je v poli
 
                 if (xCoordinate + shipLenght > field.GetLength(0))
                 {
@@ -110,6 +112,7 @@ namespace BattleshipGame
                 {
                     if (field[yCoordinate, xCoordinate + i] == "- ")
                     {
+                        shipsOverlapping = false;
                         field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
                     }
                     else
@@ -270,7 +273,15 @@ namespace BattleshipGame
             PlaceShip(3, "C", "Place a Cruiser (C, 1*3): ", playerField);
             PlaceShip(3, "S", "Place a Submarine (S, 1*3): ", playerField);
             PlaceShip(2, "D", "Place a Destroyer (D, 1*2): ", playerField);
- 
+
+            //rozmistuju lode pocitace
+
+            PlaceShip(5, "A", "", computerField);
+            PlaceShip(4, "B", "", computerField);
+            PlaceShip(3, "C", "", computerField);
+            PlaceShip(3, "S", "", computerField);
+            PlaceShip(2, "D", "", computerField);
+
         }
     }
 }
