@@ -65,13 +65,15 @@ namespace BattleshipGame
                 Console.Write(message);
                 shipCoordinates = Console.ReadLine();
 
-                //kontroluji, jestli jsou zadane souradnice x validni
+                //kontroluji, jestli je delka zadanych souradnic validni
 
                 if (!(shipCoordinates.Length == 2 || shipCoordinates.Length == 3))
                 {
                     Console.WriteLine("Invalid input");
                     continue;
                 }
+
+                //kontroluji, jestli jsou zadane souradnice x validni
 
                 for (int i = 0; i < field.GetLength(0); i++)
                 {
@@ -134,38 +136,39 @@ namespace BattleshipGame
             PrintField(field);
         }
 
-        /*static int PlayerRound() 
+        static void PlayerRound(string[,] opponentField) 
         {
-            Console.WriteLine("Your turn. Enter coordinates to attack.");
-            PrintField(playerField);
-            string shipCoordinates;
+            string attackCoordinates;
             int xCoordinate;
             int yCoordinate;
             while (true)
             {
-                shipCoordinates = "";
+                attackCoordinates = "";
                 xCoordinate = 0;
                 yCoordinate = 0;
-                Console.Write(message);
-                shipCoordinates = Console.ReadLine();
+                Console.Write("Your turn. Enter coordinates to attack: ");
+                attackCoordinates = Console.ReadLine();
+                PrintField(opponentField);
 
-                //kontroluji, jestli jsou zadane souradnice x validni
+                //kontroluji, jestli je delka zadanych souradnic validni
 
-                if (!(shipCoordinates.Length == 2 || shipCoordinates.Length == 3))
+                if (!(attackCoordinates.Length == 2 || attackCoordinates.Length == 3))
                 {
                     Console.WriteLine("Invalid input");
                     continue;
                 }
 
-                for (int i = 0; i < field.GetLength(0); i++)
+                //kontroluji, jestli jsou zadane souradnice x validni
+
+                for (int i = 0; i < opponentField.GetLength(0); i++)
                 {
-                    if (field[0, i] == shipCoordinates.Substring(0, 1).ToUpper() + " ")
+                    if (opponentField[0, i] == attackCoordinates.Substring(0, 1).ToUpper() + " ")
                     {
                         xCoordinate = i;
                         break;
                     }
                 }
-                if (xCoordinate == 0)   
+                if (xCoordinate == 0)
                 {
                     Console.WriteLine("Invalid input");
                     continue;
@@ -173,8 +176,8 @@ namespace BattleshipGame
 
                 //kontroluji, jestli jsou zadane souradnice y validni
 
-                int.TryParse(shipCoordinates.Substring(1), out yCoordinate);
-                if (yCoordinate == 0 || yCoordinate > field.GetLength(1))
+                int.TryParse(attackCoordinates.Substring(1), out yCoordinate);
+                if (yCoordinate == 0 || yCoordinate > opponentField.GetLength(1))
                 {
                     Console.WriteLine("Invalid input");
                     continue;
@@ -184,15 +187,9 @@ namespace BattleshipGame
                     break;
                 }
             }
-            for (int i = 0; i < shipLenght; i++)
-            {
-                field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
-            }
-            PrintField(field);
-        }
         }
 
-        static int ComputerRound()
+        /*static void ComputerRound()
         {
             Console.WriteLine("Computer's turn");
             Console.WriteLine("The computer attacked " + );
@@ -281,6 +278,10 @@ namespace BattleshipGame
             PlaceShip(3, "C", "", computerField);
             PlaceShip(3, "S", "", computerField);
             PlaceShip(2, "D", "", computerField);
+
+            //muzu zacit hrat
+
+            PlayerRound(computerField);
 
         }
     }
