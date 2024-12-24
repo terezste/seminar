@@ -197,48 +197,132 @@ namespace BattleshipGame
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Welcome to the Battleship game");
-
-            //navrhuji pole a kontroluji vstup, zaroven kontroluji, jestli pole neni moc velke nebo moc male
-
-            int columns;
-            int rows;
-            int indexOfAsterisk;
-
             while (true)
             {
-                columns = 0;
-                rows = 0;
-                indexOfAsterisk = 0;
+                Console.WriteLine("Welcome to the Battleship game");
 
-                Console.Write("Choose the size of your field (e.g. 10*12): ");
-                string fieldSizeInput = Console.ReadLine();
+                //navrhuji pole a kontroluji vstup, zaroven kontroluji, jestli pole neni moc velke nebo moc male
 
-                if (fieldSizeInput.Contains("*"))
+                int columns;
+                int rows;
+                int indexOfAsterisk;
+
+                while (true)
                 {
-                    indexOfAsterisk = fieldSizeInput.IndexOf("*");
-                    int.TryParse(fieldSizeInput.Substring(0, indexOfAsterisk), out columns);
-                    int.TryParse(fieldSizeInput.Substring(indexOfAsterisk + 1), out rows);
+                    columns = 0;
+                    rows = 0;
+                    indexOfAsterisk = 0;
+
+                    Console.Write("Choose the size of your field (e.g. 10*12): ");
+                    string fieldSizeInput = Console.ReadLine();
+
+                    if (fieldSizeInput.Contains("*"))
+                    {
+                        indexOfAsterisk = fieldSizeInput.IndexOf("*");
+                        int.TryParse(fieldSizeInput.Substring(0, indexOfAsterisk), out columns);
+                        int.TryParse(fieldSizeInput.Substring(indexOfAsterisk + 1), out rows);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid input");
+                        continue;
+                    }
+
+                    if (columns > 26 || rows > 26)
+                    {
+                        Console.WriteLine("Field is too big");
+                        continue;
+                    }
+                    else if (columns < 5 || rows < 5)
+                    {
+                        Console.WriteLine("Field is too small");
+                        continue;
+                    }
+                    else if (columns == 0 || rows == 0)
+                    {
+                        Console.WriteLine("Invalid input");
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                //vytvorim si vsechna pole, ktera budu pouzivat (+ 1 radek a sloupec, protoze mam jeste popisky)
+
+                string[,] playerField = new string[columns + 1, rows + 1];
+                string[,] computerField = new string[columns + 1, rows + 1];
+                string[,] revealedComputerField = new string[columns + 1, rows + 1];
+
+                //zadam si zakladni hodnoty do poli
+
+                InitializeField(playerField, columns, rows);
+                InitializeField(computerField, columns, rows);
+                InitializeField(revealedComputerField, columns, rows);
+
+                PrintField(playerField);
+
+                //rozmistuji sve lode
+
+                Console.WriteLine("Time to place your ships. You have 5 ships.\nEnter coordinates of the left corner of the ship (e.g. b5)");
+
+                PlaceShip(5, "A", "Place an Aircraft Carrier (A, 1*5): ", playerField);
+                PlaceShip(4, "B", "Place a Battleship (B, 1*4): ", playerField);
+                PlaceShip(3, "C", "Place a Cruiser (C, 1*3): ", playerField);
+                PlaceShip(3, "S", "Place a Submarine (S, 1*3): ", playerField);
+                PlaceShip(2, "D", "Place a Destroyer (D, 1*2): ", playerField);
+
+                //rozmistuju lode pocitace
+
+                PlaceShip(5, "A", "", computerField);
+                PlaceShip(4, "B", "", computerField);
+                PlaceShip(3, "C", "", computerField);
+                PlaceShip(3, "S", "", computerField);
+                PlaceShip(2, "D", "", computerField);
+
+                //vytvorim si tyto promenne a dle nich budu moct ukoncit hru jakmile jeden z hracu potopi vsechny lode - tedy 17krat uderi cast lode)
+
+                int playersHitCount = 0;
+                int computersHitCount = 0;
+
+                //muzu zacit hrat
+
+                while (playersHitCount < 17 || computersHitCount < 17)
+                {
+                    PlayerRound(computerField);
+                    //computerround
+                }
+                if (playersHitCount == 17)
+                {
+                    Console.WriteLine("You won!");
                 }
                 else
                 {
-                    Console.WriteLine("Invalid input");
-                    continue;
+                    Console.WriteLine("You lost!");
                 }
 
-                if (columns > 26 || rows > 26)
+                //uz se jenom ptam, jestli chce hrac hrat znova
+
+                string playAgain;
+
+                while (true)
                 {
-                    Console.WriteLine("Field is too big");
-                    continue;
+                    Console.Write("Play again? (y/n): ");
+                    playAgain = Console.ReadLine();
+                    if (!(playAgain == "y" || playAgain == "Y" || playAgain == "n" || playAgain == "N"))
+                    {
+                        Console.WriteLine("Invalid input");
+                        continue;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                else if (columns < 5 || rows < 5)
+
+                if (playAgain == "y" || playAgain == "Y")
                 {
-                    Console.WriteLine("Field is too small");
-                    continue;
-                }
-                else if (columns == 0 || rows == 0)
-                {
-                    Console.WriteLine("Invalid input");
                     continue;
                 }
                 else
@@ -246,42 +330,6 @@ namespace BattleshipGame
                     break;
                 }
             }
-            
-            //vytvorim si vsechna pole, ktera budu pouzivat (+ 1, protoze mam jeste popisky)
-
-            string[,] playerField = new string[columns + 1, rows + 1];
-            string[,] computerField = new string[columns + 1, rows + 1];
-            string[,] revealedComputerField = new string[columns + 1, rows + 1];
-
-            //zadam si zakladni hodnoty do poli
-
-            InitializeField(playerField, columns, rows);
-            InitializeField(computerField, columns, rows);
-            InitializeField(revealedComputerField, columns, rows);
-
-            PrintField(playerField);
-
-            //rozmistuji sve lode
-
-            Console.WriteLine("Time to place your ships. You have 5 ships.\nEnter coordinates of the left corner of the ship (e.g. b5)");
-
-            PlaceShip(5, "A", "Place an Aircraft Carrier (A, 1*5): ", playerField);
-            PlaceShip(4, "B", "Place a Battleship (B, 1*4): ", playerField);
-            PlaceShip(3, "C", "Place a Cruiser (C, 1*3): ", playerField);
-            PlaceShip(3, "S", "Place a Submarine (S, 1*3): ", playerField);
-            PlaceShip(2, "D", "Place a Destroyer (D, 1*2): ", playerField);
-
-            //rozmistuju lode pocitace
-
-            PlaceShip(5, "A", "", computerField);
-            PlaceShip(4, "B", "", computerField);
-            PlaceShip(3, "C", "", computerField);
-            PlaceShip(3, "S", "", computerField);
-            PlaceShip(2, "D", "", computerField);
-
-            //muzu zacit hrat
-
-            PlayerRound(computerField);
 
         }
     }
