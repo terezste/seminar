@@ -52,7 +52,7 @@ namespace BattleshipGame
             field[0, 0] = "   ";
         }
 
-        static void PlaceShip(int shipLenght, string shipSymbol, string message, string[,] field)
+        static void PlacePlayerShip(int shipLenght, string shipSymbol, string message, string[,] field)
         {
             string shipCoordinates;
             int xCoordinate;
@@ -115,7 +115,6 @@ namespace BattleshipGame
                     if (field[yCoordinate, xCoordinate + i] == "- ")
                     {
                         shipsOverlapping = false;
-                        field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
                     }
                     else
                     {
@@ -128,12 +127,74 @@ namespace BattleshipGame
                     Console.WriteLine("Invalid input. Ships cannot overlap");
                     continue;
                 }
+
+                //pokud je vse v poradku, lod zakreslim do pole
+
                 else
                 {
-                    break;
+                    for (int i = 0; i < shipLenght; i++)
+                    {
+                        if (field[yCoordinate, xCoordinate + i] == "- ")
+                        {
+                            field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
+                        }
+                    }
                 }
+                break;
             }  
             PrintField(field);
+        }
+
+        static void PlaceComputerShip (int shipLenght, string shipSymbol, string[,] field)
+        {
+            Random rnd = new Random();
+            while (true)
+            {
+                //generuji nahodne souradnice
+
+                int xCoordinate = rnd.Next(1, field.GetLength(0) - 1);
+                int yCoordinate = rnd.Next(1, field.GetLength(1) - 1);
+
+                Console.WriteLine(xCoordinate + "   " + yCoordinate);
+
+                //zadavam podminky, aby se lode neprekryvaly
+
+                bool shipsOverlapping = false;
+
+                for (int i = 0; i < shipLenght; i++)
+                {
+                    //tady nekde problem!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                    if (field[yCoordinate, xCoordinate + i] == "- ")
+                    {
+                        shipsOverlapping = false;
+                    }
+                    else
+                    {
+                        shipsOverlapping = true;
+                        break;
+                    }
+                }
+                if (shipsOverlapping == true)
+                {
+                    continue;
+                }
+
+                //pokud je vse v poradku, lod zakreslim do pole
+
+                else
+                {
+                    for (int i = 0; i < shipLenght; i++)
+                    {
+                        if (field[yCoordinate, xCoordinate + i] == "- ")
+                        {
+                            field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
+                        }
+                    }
+                }
+                break;
+            }
+            Console.WriteLine("gdzahjsdj");
+            PrintField (field);
         }
 
         static void PlayerRound(string[,] opponentField) 
@@ -267,19 +328,19 @@ namespace BattleshipGame
 
                 Console.WriteLine("Time to place your ships. You have 5 ships.\nEnter coordinates of the left corner of the ship (e.g. b5)");
 
-                PlaceShip(5, "A", "Place an Aircraft Carrier (A, 1*5): ", playerField);
-                PlaceShip(4, "B", "Place a Battleship (B, 1*4): ", playerField);
-                PlaceShip(3, "C", "Place a Cruiser (C, 1*3): ", playerField);
-                PlaceShip(3, "S", "Place a Submarine (S, 1*3): ", playerField);
-                PlaceShip(2, "D", "Place a Destroyer (D, 1*2): ", playerField);
+                PlacePlayerShip(5, "A", "Place an Aircraft Carrier (A, 1*5): ", playerField);
+                PlacePlayerShip(4, "B", "Place a Battleship (B, 1*4): ", playerField);
+                PlacePlayerShip(3, "C", "Place a Cruiser (C, 1*3): ", playerField);
+                PlacePlayerShip(3, "S", "Place a Submarine (S, 1*3): ", playerField);
+                PlacePlayerShip(2, "D", "Place a Destroyer (D, 1*2): ", playerField);
 
                 //rozmistuju lode pocitace
 
-                PlaceShip(5, "A", "", computerField);
-                PlaceShip(4, "B", "", computerField);
-                PlaceShip(3, "C", "", computerField);
-                PlaceShip(3, "S", "", computerField);
-                PlaceShip(2, "D", "", computerField);
+                PlaceComputerShip(5, "A", computerField);
+                PlaceComputerShip(4, "B", computerField);
+                PlaceComputerShip(3, "C", computerField);
+                PlaceComputerShip(3, "S", computerField);
+                PlaceComputerShip(2, "D", computerField);
 
                 //vytvorim si tyto promenne a dle nich budu moct ukoncit hru jakmile jeden z hracu potopi vsechny lode - tedy 17krat uderi cast lode)
 
@@ -287,6 +348,8 @@ namespace BattleshipGame
                 int computersHitCount = 0;
 
                 //muzu zacit hrat
+
+                Console.WriteLine("All set!");
 
                 while (playersHitCount < 17 || computersHitCount < 17)
                 {
