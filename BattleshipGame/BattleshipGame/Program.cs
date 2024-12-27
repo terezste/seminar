@@ -152,10 +152,15 @@ namespace BattleshipGame
             {
                 //generuji nahodne souradnice
 
-                int xCoordinate = rnd.Next(1, field.GetLength(0) - 1);
+                int xCoordinate = rnd.Next(1, field.GetLength(0) - 2); //-2, protoze vsechny lode jsou vetsi nez 1 (takze by nedavalo smysl, aby pocitac daval lod na posledni x souradnici, protoze to bude vzdy presahovat)
                 int yCoordinate = rnd.Next(1, field.GetLength(1) - 1);
 
-                Console.WriteLine(xCoordinate + "   " + yCoordinate);
+                //kontroluji, jestli lod je v poli
+
+                if (xCoordinate + shipLenght > field.GetLength(0))
+                {
+                    continue;
+                }
 
                 //zadavam podminky, aby se lode neprekryvaly
 
@@ -163,7 +168,6 @@ namespace BattleshipGame
 
                 for (int i = 0; i < shipLenght; i++)
                 {
-                    //tady nekde problem!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                     if (field[yCoordinate, xCoordinate + i] == "- ")
                     {
                         shipsOverlapping = false;
@@ -193,11 +197,9 @@ namespace BattleshipGame
                 }
                 break;
             }
-            Console.WriteLine("gdzahjsdj");
-            PrintField (field);
         }
 
-        static void PlayerRound(string[,] opponentField) 
+        static void PlayerRound(string[,] computerField, string[,] revealedComputerField, int playersHitCount) 
         {
             string attackCoordinates;
             int xCoordinate;
@@ -209,7 +211,7 @@ namespace BattleshipGame
                 yCoordinate = 0;
                 Console.Write("Your turn. Enter coordinates to attack: ");
                 attackCoordinates = Console.ReadLine();
-                PrintField(opponentField);
+                PrintField(revealedComputerField);
 
                 //kontroluji, jestli je delka zadanych souradnic validni
 
@@ -221,9 +223,9 @@ namespace BattleshipGame
 
                 //kontroluji, jestli jsou zadane souradnice x validni
 
-                for (int i = 0; i < opponentField.GetLength(0); i++)
+                for (int i = 0; i < computerField.GetLength(0); i++)
                 {
-                    if (opponentField[0, i] == attackCoordinates.Substring(0, 1).ToUpper() + " ")
+                    if (computerField[0, i] == attackCoordinates.Substring(0, 1).ToUpper() + " ")
                     {
                         xCoordinate = i;
                         break;
@@ -238,22 +240,34 @@ namespace BattleshipGame
                 //kontroluji, jestli jsou zadane souradnice y validni
 
                 int.TryParse(attackCoordinates.Substring(1), out yCoordinate);
-                if (yCoordinate == 0 || yCoordinate > opponentField.GetLength(1))
+                if (yCoordinate == 0 || yCoordinate > computerField.GetLength(1))
                 {
                     Console.WriteLine("Invalid input");
                     continue;
                 }
-                else
-                {
-                    break;
-                }
+                break;
+            }
+
+            //vim, ze zadany input je v poradku, kontroluji, jestli hrac zasahl lod, nebo ne a pokud ano
+
+            if (computerField[xCoordinate, yCoordinate] == "- ")
+            {
+                Console.WriteLine("You miss");
+            }
+            else
+            {
+                revealedComputerField[xCoordinate, yCoordinate] = "X ";
+                Console.WriteLine("You hit");
+                playersHitCount++;
             }
         }
 
         /*static void ComputerRound()
         {
             Console.WriteLine("Computer's turn");
-            Console.WriteLine("The computer attacked " + );
+
+
+            Console.WriteLine("The computer attacked " +  + "and " + );
         }*/
 
         static void Main(string[] args)
@@ -344,8 +358,8 @@ namespace BattleshipGame
 
                 //vytvorim si tyto promenne a dle nich budu moct ukoncit hru jakmile jeden z hracu potopi vsechny lode - tedy 17krat uderi cast lode)
 
-                int playersHitCount = 0;
-                int computersHitCount = 0;
+                int playersHitCount = 0; //kolikrat hrac uderi lod pocitace
+                int computersHitCount = 0; //kolikeat pocitac uderi lod hrace
 
                 //muzu zacit hrat
 
@@ -353,7 +367,7 @@ namespace BattleshipGame
 
                 while (playersHitCount < 17 || computersHitCount < 17)
                 {
-                    PlayerRound(computerField);
+                    PlayerRound(computerField, revealedComputerField, playersHitCount);
                     //computerround
                 }
                 if (playersHitCount == 17)
