@@ -134,10 +134,7 @@ namespace BattleshipGame
                 {
                     for (int i = 0; i < shipLenght; i++)
                     {
-                        if (field[yCoordinate, xCoordinate + i] == "- ")
-                        {
-                            field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
-                        }
+                        field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
                     }
                 }
                 break;
@@ -168,11 +165,7 @@ namespace BattleshipGame
 
                 for (int i = 0; i < shipLenght; i++)
                 {
-                    if (field[yCoordinate, xCoordinate + i] == "- ")
-                    {
-                        shipsOverlapping = false;
-                    }
-                    else
+                    if (field[yCoordinate, xCoordinate + i] != "- ")
                     {
                         shipsOverlapping = true;
                         break;
@@ -189,10 +182,7 @@ namespace BattleshipGame
                 {
                     for (int i = 0; i < shipLenght; i++)
                     {
-                        if (field[yCoordinate, xCoordinate + i] == "- ")
-                        {
-                            field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
-                        }
+                        field[yCoordinate, xCoordinate + i] = shipSymbol + " ";
                     }
                 }
                 break;
@@ -248,7 +238,7 @@ namespace BattleshipGame
                 break;
             }
 
-            //vim, ze zadany input je v poradku, kontroluji, jestli hrac zasahl lod, nebo ne a pokud ano
+            //vim, ze zadany input je v poradku, kontroluji, jestli hrac zasahl lod, nebo ne
 
             if (computerField[xCoordinate, yCoordinate] == "- ")
             {
@@ -260,15 +250,35 @@ namespace BattleshipGame
                 Console.WriteLine("You hit");
                 playersHitCount++;
             }
+
+            PrintField(revealedComputerField);
         }
 
-        /*static void ComputerRound()
+        static void ComputerRound(string[,] playerField, int computersHitCount)
         {
+            int xCoordinate;
+            int yCoordinate;
+            string hitOrMissStatus = "missed";
             Console.WriteLine("Computer's turn");
 
+            Console.WriteLine("Your field:\n");
+            PrintField(playerField);
 
-            Console.WriteLine("The computer attacked " +  + "and " + );
-        }*/
+            if (playerField[xCoordinate, yCoordinate] == "- ")
+            {
+
+            }
+            else
+            {
+                playerField[xCoordinate, yCoordinate] = "X ";
+                hitOrMissStatus = "hit";
+                computersHitCount++;
+            }
+
+            Console.WriteLine("The computer attacked " + xCoordinate + yCoordinate + " and " + hitOrMissStatus);
+            Console.WriteLine("Your field:\n");
+            PrintField(playerField);
+        }
 
         static void Main(string[] args)
         {
@@ -368,7 +378,8 @@ namespace BattleshipGame
                 while (playersHitCount < 17 || computersHitCount < 17)
                 {
                     PlayerRound(computerField, revealedComputerField, playersHitCount);
-                    //computerround
+
+                    ComputerRound(playerField, computersHitCount);
                 }
                 if (playersHitCount == 17)
                 {
