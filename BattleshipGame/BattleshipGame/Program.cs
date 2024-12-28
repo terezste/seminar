@@ -20,8 +20,9 @@ namespace BattleshipGame
                 }
                 Console.WriteLine();
             }
-            Console.WriteLine();
+            Console.WriteLine("");
         }
+
 
         static void InitializeField(string[,] field, int columns, int rows)
         {
@@ -49,8 +50,11 @@ namespace BattleshipGame
                 }
             }
 
+            //levy krajni roh je prazdny
+
             field[0, 0] = "   ";
         }
+
 
         static void PlacePlayerShip(int shipLenght, string shipSymbol, string message, string[,] field)
         {
@@ -142,6 +146,7 @@ namespace BattleshipGame
             PrintField(field);
         }
 
+
         static void PlaceComputerShip (int shipLenght, string shipSymbol, string[,] field)
         {
             Random rnd = new Random();
@@ -149,8 +154,8 @@ namespace BattleshipGame
             {
                 //generuji nahodne souradnice
 
-                int xCoordinate = rnd.Next(1, field.GetLength(0) - 2); //-2, protoze vsechny lode jsou vetsi nez 1 (takze by nedavalo smysl, aby pocitac daval lod na posledni x souradnici, protoze to bude vzdy presahovat)
-                int yCoordinate = rnd.Next(1, field.GetLength(1) - 1);
+                int xCoordinate = rnd.Next(1, field.GetLength(0) - 1); //-1, protoze vsechny lode jsou vetsi nez 1 (takze by nedavalo smysl, aby pocitac daval lod na posledni x souradnici, protoze to bude vzdy presahovat)
+                int yCoordinate = rnd.Next(1, field.GetLength(1));
 
                 //kontroluji, jestli lod je v poli
 
@@ -165,6 +170,13 @@ namespace BattleshipGame
 
                 for (int i = 0; i < shipLenght; i++)
                 {
+                    
+                    
+                    
+                    Console.WriteLine(xCoordinate + "   " + yCoordinate);
+
+
+
                     if (field[yCoordinate, xCoordinate + i] != "- ")
                     {
                         shipsOverlapping = true;
@@ -187,21 +199,29 @@ namespace BattleshipGame
                 }
                 break;
             }
+
+
+            PrintField (field);
+
+
         }
+
 
         static void PlayerRound(string[,] computerField, string[,] revealedComputerField, int playersHitCount) 
         {
             string attackCoordinates;
             int xCoordinate;
             int yCoordinate;
+            Console.WriteLine("Your turn");
             while (true)
             {
                 attackCoordinates = "";
                 xCoordinate = 0;
                 yCoordinate = 0;
-                Console.Write("Your turn. Enter coordinates to attack: ");
-                attackCoordinates = Console.ReadLine();
+                Console.WriteLine("Opponent's field:");
                 PrintField(revealedComputerField);
+                Console.Write("Enter coordinates to attack: ");
+                attackCoordinates = Console.ReadLine();
 
                 //kontroluji, jestli je delka zadanych souradnic validni
 
@@ -235,50 +255,68 @@ namespace BattleshipGame
                     Console.WriteLine("Invalid input");
                     continue;
                 }
-                break;
-            }
 
-            //vim, ze zadany input je v poradku, kontroluji, jestli hrac zasahl lod, nebo ne
+                //vim, ze zadany input je v poradku, kontroluji, jestli hrac zasahl lod, nebo ne
 
-            if (computerField[xCoordinate, yCoordinate] == "- ")
-            {
-                Console.WriteLine("You miss");
+                if (computerField[yCoordinate, xCoordinate] == "o " || computerField[yCoordinate, xCoordinate] == "X ")
+                {
+                    Console.WriteLine("You already tried that. Try again");
+                    continue;
+                }
+                else if (computerField[yCoordinate, xCoordinate] == "- ")
+                {
+                    revealedComputerField[yCoordinate, xCoordinate] = "o ";
+                    Console.WriteLine("You miss");
+                    break;
+                }
+                else
+                {
+                    revealedComputerField[yCoordinate, xCoordinate] = "X ";
+                    Console.WriteLine("You hit");
+                    playersHitCount++;
+                    break;
+                }
             }
-            else
-            {
-                revealedComputerField[xCoordinate, yCoordinate] = "X ";
-                Console.WriteLine("You hit");
-                playersHitCount++;
-            }
-
+            Console.WriteLine("Opponent's field:");
             PrintField(revealedComputerField);
         }
 
+
         static void ComputerRound(string[,] playerField, int computersHitCount)
         {
+            Random rnd = new Random();
             int xCoordinate;
             int yCoordinate;
-            string hitOrMissStatus = "missed";
-            Console.WriteLine("Computer's turn");
+            string hitOrMiss = "missed";
+            Console.WriteLine("Opponent's turn");
 
-            Console.WriteLine("Your field:\n");
-            PrintField(playerField);
-
-            if (playerField[xCoordinate, yCoordinate] == "- ")
+            while (true)
             {
+                xCoordinate = rnd.Next(1, playerField.GetLength(0) - 1);
+                yCoordinate = rnd.Next(1, playerField.GetLength(1) - 1);
 
+                if (playerField[yCoordinate, xCoordinate] == "o " || playerField[yCoordinate, xCoordinate] == "X ")
+                {
+                    continue;
+                }
+                else if (playerField[yCoordinate, xCoordinate] == "- ")
+                {
+                    playerField[yCoordinate, xCoordinate] = "o ";
+                    break;
+                }
+                else
+                {
+                    playerField[yCoordinate, xCoordinate] = "X ";
+                    hitOrMiss = "hit";
+                    computersHitCount++;
+                    break;
+                }
             }
-            else
-            {
-                playerField[xCoordinate, yCoordinate] = "X ";
-                hitOrMissStatus = "hit";
-                computersHitCount++;
-            }
-
-            Console.WriteLine("The computer attacked " + xCoordinate + yCoordinate + " and " + hitOrMissStatus);
-            Console.WriteLine("Your field:\n");
+            Console.WriteLine("The computer " + hitOrMiss);
+            Console.WriteLine("Your field:");
             PrintField(playerField);
         }
+
 
         static void Main(string[] args)
         {
@@ -313,6 +351,8 @@ namespace BattleshipGame
                         continue;
                     }
 
+                    //urcuji minima a maxima velikosti pole
+
                     if (columns > 26 || rows > 26)
                     {
                         Console.WriteLine("Field is too big");
@@ -321,11 +361,6 @@ namespace BattleshipGame
                     else if (columns < 5 || rows < 5)
                     {
                         Console.WriteLine("Field is too small");
-                        continue;
-                    }
-                    else if (columns == 0 || rows == 0)
-                    {
-                        Console.WriteLine("Invalid input");
                         continue;
                     }
                     else
@@ -383,11 +418,11 @@ namespace BattleshipGame
                 }
                 if (playersHitCount == 17)
                 {
-                    Console.WriteLine("You won!");
+                    Console.WriteLine("YOU WON!");
                 }
                 else
                 {
-                    Console.WriteLine("You lost!");
+                    Console.WriteLine("YOU LOST!");
                 }
 
                 //uz se jenom ptam, jestli chce hrac hrat znova
