@@ -170,13 +170,6 @@ namespace BattleshipGame
 
                 for (int i = 0; i < shipLenght; i++)
                 {
-                    
-                    
-                    
-                    Console.WriteLine(xCoordinate + "   " + yCoordinate);
-
-
-
                     if (field[yCoordinate, xCoordinate + i] != "- ")
                     {
                         shipsOverlapping = true;
@@ -199,90 +192,120 @@ namespace BattleshipGame
                 }
                 break;
             }
-
-
-            PrintField (field);
-
-
         }
 
 
-        static void PlayerRound(string[,] computerField, string[,] revealedComputerField, int playersHitCount) 
+        static void PlayerRound(string[,] computerField, string[,] revealedComputerField, int playersHitCount, int ammo) 
         {
             string attackCoordinates;
             int xCoordinate;
             int yCoordinate;
-            Console.WriteLine("Your turn");
-            while (true)
-            {
-                attackCoordinates = "";
-                xCoordinate = 0;
-                yCoordinate = 0;
-                Console.WriteLine("Opponent's field:");
-                PrintField(revealedComputerField);
-                Console.Write("Enter coordinates to attack: ");
-                attackCoordinates = Console.ReadLine();
+            string shootOrReload = "";
+            Console.WriteLine("Your turn\nYou have " + ammo + " ammo");
 
-                //kontroluji, jestli je delka zadanych souradnic validni
-
-                if (!(attackCoordinates.Length == 2 || attackCoordinates.Length == 3))
+                if (ammo > 0 || ammo < 5)
                 {
-                    Console.WriteLine("Invalid input");
-                    continue;
-                }
-
-                //kontroluji, jestli jsou zadane souradnice x validni
-
-                for (int i = 0; i < computerField.GetLength(0); i++)
-                {
-                    if (computerField[0, i] == attackCoordinates.Substring(0, 1).ToUpper() + " ")
+                    while (true)
                     {
-                        xCoordinate = i;
-                        break;
+                        Console.Write("Shoot or reload? (s/r): ");
+                        shootOrReload = Console.ReadLine();
+                        if (shootOrReload == "s" || shootOrReload == "r")
+                        {
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Invalid input");
+                            continue;
+                        }
                     }
                 }
-                if (xCoordinate == 0)
+
+                //strilim
+
+                if (shootOrReload == "s" || ammo == 5)
                 {
-                    Console.WriteLine("Invalid input");
-                    continue;
+                    while (true)
+                    {
+                        attackCoordinates = "";
+                        xCoordinate = 0;
+                        yCoordinate = 0;
+                        Console.WriteLine("Opponent's field:");
+                        PrintField(revealedComputerField);
+                        Console.Write("Enter coordinates to attack: ");
+                        attackCoordinates = Console.ReadLine();
+
+                        //kontroluji, jestli je delka zadanych souradnic validni
+
+                        if (!(attackCoordinates.Length == 2 || attackCoordinates.Length == 3))
+                        {
+                            Console.WriteLine("Invalid input");
+                            continue;
+                        }
+
+                        //kontroluji, jestli jsou zadane souradnice x validni
+
+                        for (int i = 0; i < computerField.GetLength(0); i++)
+                        {
+                            if (computerField[0, i] == attackCoordinates.Substring(0, 1).ToUpper() + " ")
+                            {
+                                xCoordinate = i;
+                                break;
+                            }
+                        }
+                        if (xCoordinate == 0)
+                        {
+                            Console.WriteLine("Invalid input");
+                            continue;
+                        }
+
+                        //kontroluji, jestli jsou zadane souradnice y validni
+
+                        int.TryParse(attackCoordinates.Substring(1), out yCoordinate);
+                        if (yCoordinate == 0 || yCoordinate > computerField.GetLength(1))
+                        {
+                            Console.WriteLine("Invalid input");
+                            continue;
+                        }
+
+                        //vim, ze zadany input je v poradku, kontroluji, jestli hrac zasahl lod, nebo ne
+
+                        if (computerField[yCoordinate, xCoordinate] == "o " || computerField[yCoordinate, xCoordinate] == "X ")
+                        {
+                            Console.WriteLine("You already tried that. Try again");
+                            continue;
+                        }
+                        else if (computerField[yCoordinate, xCoordinate] == "- ")
+                        {
+                            revealedComputerField[yCoordinate, xCoordinate] = "o ";
+                            Console.WriteLine("You miss");
+                            break;
+                        }
+                        else
+                        {
+                            revealedComputerField[yCoordinate, xCoordinate] = "X ";
+                            Console.WriteLine("You hit");
+                            playersHitCount++;
+                            break;
+                        }
+
+                    }
+                    Console.WriteLine("Opponent's field:");
+                    PrintField(revealedComputerField);
+                    ammo--;
                 }
 
-                //kontroluji, jestli jsou zadane souradnice y validni
+                //dobijim munici
 
-                int.TryParse(attackCoordinates.Substring(1), out yCoordinate);
-                if (yCoordinate == 0 || yCoordinate > computerField.GetLength(1))
+                else if (shootOrReload == "r" || ammo == 0)
                 {
-                    Console.WriteLine("Invalid input");
-                    continue;
+                    Console.WriteLine("You reloaded");
+                    ammo++;
                 }
-
-                //vim, ze zadany input je v poradku, kontroluji, jestli hrac zasahl lod, nebo ne
-
-                if (computerField[yCoordinate, xCoordinate] == "o " || computerField[yCoordinate, xCoordinate] == "X ")
-                {
-                    Console.WriteLine("You already tried that. Try again");
-                    continue;
-                }
-                else if (computerField[yCoordinate, xCoordinate] == "- ")
-                {
-                    revealedComputerField[yCoordinate, xCoordinate] = "o ";
-                    Console.WriteLine("You miss");
-                    break;
-                }
-                else
-                {
-                    revealedComputerField[yCoordinate, xCoordinate] = "X ";
-                    Console.WriteLine("You hit");
-                    playersHitCount++;
-                    break;
-                }
-            }
-            Console.WriteLine("Opponent's field:");
-            PrintField(revealedComputerField);
         }
 
 
-        static void ComputerRound(string[,] playerField, int computersHitCount)
+        static void ComputerRound(string[,] playerField, int computersHitCount, int ammo)
         {
             Random rnd = new Random();
             int xCoordinate;
@@ -290,31 +313,44 @@ namespace BattleshipGame
             string hitOrMiss = "missed";
             Console.WriteLine("Opponent's turn");
 
-            while (true)
-            {
-                xCoordinate = rnd.Next(1, playerField.GetLength(0) - 1);
-                yCoordinate = rnd.Next(1, playerField.GetLength(1) - 1);
+            //pocitac prebiji
 
-                if (playerField[yCoordinate, xCoordinate] == "o " || playerField[yCoordinate, xCoordinate] == "X ")
-                {
-                    continue;
-                }
-                else if (playerField[yCoordinate, xCoordinate] == "- ")
-                {
-                    playerField[yCoordinate, xCoordinate] = "o ";
-                    break;
-                }
-                else
-                {
-                    playerField[yCoordinate, xCoordinate] = "X ";
-                    hitOrMiss = "hit";
-                    computersHitCount++;
-                    break;
-                }
+            if (ammo == 0)
+            {
+                Console.WriteLine("Opponent reloaded");
+                ammo++;
             }
-            Console.WriteLine("The computer " + hitOrMiss);
-            Console.WriteLine("Your field:");
-            PrintField(playerField);
+
+            //pocitac strili
+
+            else
+            {
+                while (true)
+                {
+                    xCoordinate = rnd.Next(1, playerField.GetLength(0) - 1);
+                    yCoordinate = rnd.Next(1, playerField.GetLength(1) - 1);
+
+                    if (playerField[yCoordinate, xCoordinate] == "o " || playerField[yCoordinate, xCoordinate] == "X ")
+                    {
+                        continue;
+                    }
+                    else if (playerField[yCoordinate, xCoordinate] == "- ")
+                    {
+                        playerField[yCoordinate, xCoordinate] = "o ";
+                        break;
+                    }
+                    else
+                    {
+                        playerField[yCoordinate, xCoordinate] = "X ";
+                        hitOrMiss = "hit";
+                        computersHitCount++;
+                        break;
+                    }
+                }
+                Console.WriteLine("Your opponent " + hitOrMiss);
+                Console.WriteLine("Your field:");
+                PrintField(playerField);
+            }
         }
 
 
@@ -406,15 +442,19 @@ namespace BattleshipGame
                 int playersHitCount = 0; //kolikrat hrac uderi lod pocitace
                 int computersHitCount = 0; //kolikeat pocitac uderi lod hrace
 
+                //tvorim promenne munice, maximalni pocet munice je 5
+
+                int playerAmmo = 5;
+                int computerAmmo = 5;
+
                 //muzu zacit hrat
 
                 Console.WriteLine("All set!");
 
                 while (playersHitCount < 17 || computersHitCount < 17)
                 {
-                    PlayerRound(computerField, revealedComputerField, playersHitCount);
-
-                    ComputerRound(playerField, computersHitCount);
+                    PlayerRound(computerField, revealedComputerField, playersHitCount, playerAmmo);
+                    ComputerRound(playerField, computersHitCount, computerAmmo);
                 }
                 if (playersHitCount == 17)
                 {
