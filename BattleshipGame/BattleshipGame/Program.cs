@@ -36,7 +36,7 @@ namespace BattleshipGame
 
             for (int x = 1; x <= rows; x++)
             {
-                //tady jsem si poradila, nevedela jsem, jak udelat, aby se mi vypsaly pismenkove souradnice dle poctu sloupcu, ktere si uzivatel sam navoli https://chatgpt.com/share/675eaaf5-8700-8012-aef2-81e7750c8f9c
+                //tady jsem si poradila, nevedela jsem, jak udelat, aby se mi vypsaly pismenkove souradnice dle poctu sloupcu, ktere si uzivatel sam navoli: https://chatgpt.com/share/675eaaf5-8700-8012-aef2-81e7750c8f9c
 
                 field[0, x] = Convert.ToString((char)('A' + x - 1) + " ");
             }        
@@ -50,7 +50,7 @@ namespace BattleshipGame
                 }
             }
 
-            //levy krajni roh je prazdny
+            //levy horni roh je prazdny
 
             field[0, 0] = "   ";
         }
@@ -77,7 +77,7 @@ namespace BattleshipGame
                     continue;
                 }
 
-                //kontroluji, jestli jsou zadane souradnice x validni
+                //prevadim pismenkovou souradnici x na cislo
 
                 for (int i = 0; i < field.GetLength(0); i++)
                 {
@@ -87,7 +87,10 @@ namespace BattleshipGame
                         break;
                     }
                 }
-                if (xCoordinate == 0)
+
+                //kontroluji, jestli jsou zadane souradnice x validni
+
+                if (xCoordinate < 1)
                 {
                     Console.WriteLine("Invalid input");
                     continue;
@@ -104,7 +107,7 @@ namespace BattleshipGame
 
                 //kontroluji, jestli lod je v poli
 
-                if (xCoordinate + shipLenght > field.GetLength(0))
+                if (xCoordinate + shipLenght > field.GetLength(1))
                 {
                     Console.WriteLine("Invalid input. Stay within the field");
                     continue;
@@ -170,7 +173,7 @@ namespace BattleshipGame
 
                 for (int i = 0; i < shipLenght; i++)
                 {
-                    if (field[yCoordinate, xCoordinate + i] != "- ")
+                    if (xCoordinate + i >= field.GetLength(1) || field[yCoordinate, xCoordinate + i] != "- ")
                     {
                         shipsOverlapping = true;
                         break;
@@ -195,7 +198,7 @@ namespace BattleshipGame
         }
 
 
-        static void PlayerRound(string[,] computerField, string[,] revealedComputerField, int playersHitCount, int ammo) 
+        static void PlayerRound(string[,] computerField, string[,] revealedComputerField, ref int playersHitCount,ref int ammo) 
         {
             string attackCoordinates;
             int xCoordinate;
@@ -203,7 +206,7 @@ namespace BattleshipGame
             string shootOrReload = "";
             Console.WriteLine("Your turn\nYou have " + ammo + " ammo");
 
-                if (ammo > 0 || ammo < 5)
+                if (ammo > 0 && ammo < 5)
                 {
                     while (true)
                     {
@@ -215,7 +218,7 @@ namespace BattleshipGame
                         }
                         else
                         {
-                            Console.WriteLine("Invalid input");
+                            Console.WriteLine("Invalid input. Enter 's' to shoot or 'r' to reload.");
                             continue;
                         }
                     }
@@ -227,7 +230,6 @@ namespace BattleshipGame
                 {
                     while (true)
                     {
-                        attackCoordinates = "";
                         xCoordinate = 0;
                         yCoordinate = 0;
                         Console.WriteLine("Opponent's field:");
@@ -305,7 +307,7 @@ namespace BattleshipGame
         }
 
 
-        static void ComputerRound(string[,] playerField, int computersHitCount, int ammo)
+        static void ComputerRound(string[,] playerField, ref int computersHitCount, ref int ammo)
         {
             Random rnd = new Random();
             int xCoordinate;
@@ -347,7 +349,10 @@ namespace BattleshipGame
                         break;
                     }
                 }
-                Console.WriteLine("Your opponent " + hitOrMiss);
+
+                char xCoordinateLetter = (char)('a' + xCoordinate - 1);
+
+                Console.WriteLine("Your opponent attacked " + xCoordinateLetter + yCoordinate + " and "+ hitOrMiss);
                 Console.WriteLine("Your field:");
                 PrintField(playerField);
             }
@@ -358,7 +363,7 @@ namespace BattleshipGame
         {
             while (true)
             {
-                Console.WriteLine("Welcome to the Battleship game");
+                Console.WriteLine("\u001b[4mWELCOME TO THE BATTLESHIP GAME\u001b[0m\n");
 
                 //navrhuji pole a kontroluji vstup, zaroven kontroluji, jestli pole neni moc velke nebo moc male
 
@@ -421,7 +426,7 @@ namespace BattleshipGame
 
                 //rozmistuji sve lode
 
-                Console.WriteLine("Time to place your ships. You have 5 ships.\nEnter coordinates of the left corner of the ship (e.g. b5)");
+                Console.WriteLine("Time to place your ships. You have 5 ships.\nEnter coordinates of the left corner of the ship (e.g. b5)\n");
 
                 PlacePlayerShip(5, "A", "Place an Aircraft Carrier (A, 1*5): ", playerField);
                 PlacePlayerShip(4, "B", "Place a Battleship (B, 1*4): ", playerField);
@@ -451,18 +456,18 @@ namespace BattleshipGame
 
                 Console.WriteLine("All set!");
 
-                while (playersHitCount < 17 || computersHitCount < 17)
+                while (playersHitCount < 17 && computersHitCount < 17)
                 {
-                    PlayerRound(computerField, revealedComputerField, playersHitCount, playerAmmo);
-                    ComputerRound(playerField, computersHitCount, computerAmmo);
+                    PlayerRound(computerField, revealedComputerField, ref playersHitCount, ref playerAmmo);
+                    ComputerRound(playerField, ref computersHitCount, ref computerAmmo);
                 }
                 if (playersHitCount == 17)
                 {
-                    Console.WriteLine("YOU WON!");
+                    Console.WriteLine("\u001b[32mYOU WON!u001b[0m");
                 }
                 else
                 {
-                    Console.WriteLine("YOU LOST!");
+                    Console.WriteLine("\u001b[31mYOU LOST!u001b[0m");
                 }
 
                 //uz se jenom ptam, jestli chce hrac hrat znova
@@ -493,7 +498,6 @@ namespace BattleshipGame
                     break;
                 }
             }
-
         }
     }
 }
