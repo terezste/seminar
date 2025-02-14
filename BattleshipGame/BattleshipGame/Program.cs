@@ -463,11 +463,11 @@ namespace BattleshipGame
                 }
                 if (playersHitCount == 17)
                 {
-                    Console.WriteLine("\u001b[32mYOU WON!u001b[0m");
+                    Console.WriteLine("\u001b[32mYOU WON!\u001b[0m");
                 }
                 else
                 {
-                    Console.WriteLine("\u001b[31mYOU LOST!u001b[0m");
+                    Console.WriteLine("\u001b[31mYOU LOST!\u001b[0m");
                 }
 
                 //uz se jenom ptam, jestli chce hrac hrat znova
