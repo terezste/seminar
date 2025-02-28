@@ -15,8 +15,8 @@ namespace Game
         {
             //Rozhodovani se mezi dvemi moznostmi a kontrola vstupu
 
-            Console.WriteLine("\na) " + optionA);
-            Console.WriteLine("b) " + optionB);
+            Console.WriteLine("\n   a) " + optionA);
+            Console.WriteLine("   b) " + optionB);
 
             while (true)
             {
@@ -42,9 +42,9 @@ namespace Game
         {
             //Rozhodovani se mezi tremi moznostmi a kontrola vstupu
 
-            Console.WriteLine("\na) " + optionA);
-            Console.WriteLine("b) " + optionB);
-            Console.WriteLine("c) " + optionC);
+            Console.WriteLine("\n   a) " + optionA);
+            Console.WriteLine("   b) " + optionB);
+            Console.WriteLine("   c) " + optionC);
 
             while (true)
             {
@@ -64,6 +64,7 @@ namespace Game
 
         static void WaitForInput()
         {
+            //prostor po dialogu odkliknout a jit dal nebo otevrit voditko nebo inventar
             while (true)
             {
                 Console.WriteLine();
@@ -81,6 +82,10 @@ namespace Game
                 else if (keyInfo.Key == ConsoleKey.Enter || keyInfo.Key == ConsoleKey.Spacebar)
                 {
                     break;
+                }
+                else
+                {
+                    Console.WriteLine("Neplatný vstup. Stisknutím 'g' otevřeš vodítko");
                 }
             }
         }
