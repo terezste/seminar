@@ -44,10 +44,10 @@ namespace Game
         public void Hurt(int amount)
         {
             health -= amount;
-            Console.WriteLine("Player got hit for " + amount + " damage");
+            Console.WriteLine("Utrpěl jsi " + amount + " zranění.");
             if (health <= 0)
             {
-                Console.WriteLine("Player is dead");
+                Console.WriteLine("\u001b[1m\u001b[31mZemřel jsi.\u001b[0m");
             }
         }
         public bool IsDead()

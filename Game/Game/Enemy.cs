@@ -25,10 +25,10 @@ namespace Game
         public void Hurt(int amount)
         {
             health -= amount;
-            Console.WriteLine("Enemy got hit for " + amount + " damage");
+            Console.WriteLine("Nepřítel utrpěl " + amount + " zranění.");
             if (health <= 0)
             {
-                Console.WriteLine("Enemy is dead");
+                Console.WriteLine("Nepřítel je mrtvý.");
             }
         }
         public int GetHealth()
