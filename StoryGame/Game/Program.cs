@@ -90,14 +90,14 @@ namespace StoryGame
         }
         static void PrintGuide()
         {
-            Console.WriteLine("\u001b[1m---VODÍTKO---\u001b[0m\nzmáčkni Enter nebo mezerník pro pokračování dále\nzmáčkni 'a', 'b', 'c' pro výběr možnosti\nzmáčkni 'i' pro otevření inventáře\nzmáčkni 'g' pro otevření vodítka");
+            Console.WriteLine("\u001b[4mVODÍTKO\u001b[0m\nzmáčkni Enter nebo mezerník pro pokračování dále\nzmáčkni 'a', 'b', 'c' pro výběr možnosti\nzmáčkni 'i' pro otevření inventáře\nzmáčkni 'g' pro otevření vodítka");
         }
 
         static void PrintInventory()
         {
             //vypise vse, co je v inventari
 
-            Console.WriteLine("\u001b[1m---INVENTÁŘ---\u001b[0m");
+            Console.WriteLine("\u001b[4mINVENTÁŘ\u001b[0m");
             if (inventory.Count == 0)
             {
                 Console.WriteLine("Je tu prázdno.");
@@ -114,6 +114,13 @@ namespace StoryGame
         {
             while (!player.IsDead() && !enemy.IsDead())
             {
+                if (!player.IsDead() || !enemy.IsDead())
+                {
+                        Console.WriteLine();
+                        Console.WriteLine("Máš " + player.GetHealth() + " zdraví.");
+                        Console.WriteLine("Nepřítel má " + enemy.GetHealth() + " zdraví.");
+                }
+
                 WaitForInput();
                 char choice = Deciding2Options("Utéct.", "Bojovat.");
                 if (choice == 'a')
@@ -125,16 +132,8 @@ namespace StoryGame
                     //utok hrace
                     enemy.Hurt(player.GetDamage());
 
-                    if (!enemy.IsDead())
-                    {
-                        //utok nepritele
-                        player.Hurt(enemy.GetDamage());
-
-                        Console.WriteLine();
-                        Console.WriteLine();
-                        Console.WriteLine("Máš " + player.GetHealth() + " zdraví.");
-                        Console.WriteLine("Nepřítel má " + enemy.GetHealth() + " zdraví.");
-                    }
+                    //utok nepritele
+                    player.Hurt(enemy.GetDamage());                   
                 }
             }
             if (player.IsDead())
@@ -151,19 +150,19 @@ namespace StoryGame
         {
             //poznamka: pri psani textu jsem si pomahala chatgpt, ale to snad nevadi, jelikoz kod jsem delala sama :)
 
+            PrintGuide();
+            WaitForInput();
+
             while (true)
             {
 
                 char choice; //pomocna promenna, kterou si zaznamenam jednotlive vybery hrace
 
-                Player player = new Player(50, 5);
+                Player player = new Player(50, 5); //hrac
 
-                PrintGuide();
+                Console.WriteLine("Je poledne. Tvoje boty se boří do mokré trávy a ve vzduchu visí těžká mlha, která pohlcuje obzor a tlumí všechny zvuky. Jsi znavený z dlouhé cesty a tak ti udělá radost, když konečně spatříš město.");
                 WaitForInput();
-
-                Console.WriteLine("Je ráno. Tvoje boty se boří do mokré trávy a ve vzduchu visí těžká mlha, která pohlcuje obzor a tlumí všechny zvuky. Jsi znavený z dlouhé cesty a tak ti udělá radost, když konečně spatříš město.");
-                WaitForInput();
-                Console.WriteLine("Vidíš před sebou kammenné hradby a bránu uprostřed.\nRozhodneš se vstoupit dovnitř. Brána města je otevřená, ale ty nevidíš žádné stráže.");
+                Console.WriteLine("Vidíš před sebou kammenné hradby a bránu uprostřed.\nBrána města je otevřená, ale ty nevidíš žádné stráže. Rozhodneš se tedy vstoupit dovnitř.");
                 WaitForInput();
                 Console.WriteLine("Procházíš spletitými ulicemi města. Všude je ticho a ty nevidíš ani živáčka.\nProplétáš se dál bludištěm až nakonec dorazíš na náměstí.");
                 WaitForInput();
@@ -234,9 +233,9 @@ namespace StoryGame
                         Console.WriteLine("Jít doprava ke kostelu.\n\nKostel stojí u okraje města. Jeho kamenné zdi jsou tmavé a místy porostlé mechem. Dveře jsou pootevřené a ve větru se lehce pohupují.");
                     }
                     WaitForInput();
-                    Console.WriteLine("Najednou na krku ucítíš ledový závan větru. Vzduch kolem tebe ztěžkne.\nV dálce před sebou vidíš stín.");
+                    Console.WriteLine("Stojíš a rozhlížíš se kolem sebe. Najednou na krku ucítíš ledový závan větru.\nVzduch kolem tebe ztěžkne.\nV dálce před sebou vidíš stín.");
                     WaitForInput();
-                    Console.WriteLine("Začíná okolo tebe padat hustá mlha. Stín naproti tobě je nehybný.");
+                    Console.WriteLine("Začíná okolo tebe padat hustá mlha. Stín naproti tobě je zatím nehybný, jenom se lehce chvěje ve větru.");
                     WaitForInput();
                     Console.WriteLine("Najednou se ale stín pohne a blíží se k tobě.\nTy nemáš čas váhat.");
                     Enemy enemy = new Enemy(100, 20);
@@ -250,10 +249,10 @@ namespace StoryGame
                     WaitForInput();
                     Console.WriteLine("Doklopýtáš až ke dveřím domu a překvapí tě, když je najdeš otevřené.");
                     WaitForInput();
-                    Console.WriteLine("Vkročíš dovnitř a hned spatříš ženu. Stojí tam dívá se na tebe, jako kdyby na tebe čekala už dlouho.");
+                    Console.WriteLine("Vkročíš dovnitř a hned spatříš ji. Stojí tam dívá se na tebe, jako kdyby čekala už dlouho.");
                 }
                 WaitForInput();
-                Console.WriteLine("„Tudy“\nPokyne k tobě žena a vede tě nahoru po dlouhém schodišti.");
+                Console.WriteLine("„Tudy.“\nPokyne k tobě žena a vede tě nahoru po dlouhém dřevěném schodišti.");
                 WaitForInput();
                 Console.WriteLine("„Tohle je váš pokoj,“ řekne.");
                 WaitForInput();
@@ -268,7 +267,7 @@ namespace StoryGame
                 choice = Deciding3Options("Jít spát.", "Prozkoumat dům.", "Vyhledat ženu a zeptat se jí na otázky.");
                 if (choice == 'a')
                 {
-                    Console.WriteLine("Jít spát.\n\nJsi už dost unavený z dlouhé cesty, a tak se rozhodneš raději jít spát.");
+                    Console.WriteLine("Jít spát.\n\nJsi už dost unavený z dlouhé cesty, a tak se rozhodneš jít raději spát.");
                 }
                 else if (choice == 'b')
                 {
@@ -278,16 +277,68 @@ namespace StoryGame
                     WaitForInput();
                     Console.WriteLine("Nakonec na úplném konci chodby něco spatříš.\nJe to truhla.");
                     WaitForInput();
-                    choice = Deciding2Options();
+                    choice = Deciding2Options("Otevřít ji.", "Neotvírat.");
+                    if (choice == 'a')
+                    {
+                        Console.WriteLine("Otevřít ji.\n\nOtevřeš truhlu a v ní najdeš zrezivělý meč.");
+                        inventory.Add("Zrezivělý meč (20 poškození)");
+                        player.SetDamage(20);
+                        WaitForInput();
+                        Console.WriteLine("(Zrezivělý meč byl přidán do inventáře.)");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Neotvírat.\n\nRaději truhlu neotevřeš. Kdo ví, co bys tam našel a navíc není tvoje.");
+                    }
+                    WaitForInput();
+                    Console.WriteLine("Začíná na tebe padat únava. Bude nejlepší se odebrat do svého pokoje a odpočinout si.");
 
                 }
                 else
                 {
-                    Console.WriteLine();
+                    Console.WriteLine("Vyjdeš ven z pokoje a zamíříš dolů po schodech.");
+                    WaitForInput();
+                    Console.WriteLine("Dojdeš až dolů do místnosti se stoly a židlemi, ale nikoho nevidíš.");
+                    WaitForInput();
+                    Console.WriteLine("„Haló?“ zavoláš, ale odpoví ti jen ozvěna tvého vlastního hlasu.");
+                    WaitForInput();
+                    Console.WriteLine("Pomyslíš si, že žena už šla spát.\nSám se následně odebereš nahoru do svého pokoje.");
                 }
-                
+                WaitForInput();
+                Console.WriteLine("Ulehneš tedy na tvrdou zem a zavřeš oči.");
+                WaitForInput();
+                Console.WriteLine("\nKONEC (aspoň prozatím)");
 
+                //rozhodla jsem se hru ukoncit uz tady, jelikoz uz neni nic ke kodovani a jenom by slo o to, psat text a to uz mi zabralo spoustu casu a prislo mi zbytecne, takze koncim tady :)
 
+                char playAgain;
+                while (true)
+                {
+                    Console.WriteLine("\nHrát znovu? (a/n)");
+                    playAgain = char.ToLower(Console.ReadKey(true).KeyChar);
+                    if (playAgain == 'a')
+                    {
+                        break;
+                    }
+                    else if (playAgain == 'n')
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Neplatný vstup. Stiskni 'a', nebo 'n'");
+                        continue;
+                    }
+                }
+                if (playAgain == 'a')
+                {
+                    Console.WriteLine();
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
             }
         }
     }

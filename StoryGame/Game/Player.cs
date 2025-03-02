@@ -17,12 +17,6 @@ namespace Game
             this.damage = damage;
         }
 
-        public Player()
-        {
-            health = 100;
-            damage = 20;
-        }
-
         public void SetHealth(int value)
         {
             health = value;
@@ -32,10 +26,16 @@ namespace Game
             }
         }
 
+        public void SetDamage(int value)
+        {
+            damage = value;
+        }
+
         public int GetHealth()
         {
             return health;
         }
+
         public int GetDamage()
         {
             return damage;
@@ -47,7 +47,7 @@ namespace Game
             Console.WriteLine("Utrpěl jsi " + amount + " zranění.");
             if (health <= 0)
             {
-                Console.WriteLine("\u001b[1m\u001b[31mZemřel jsi.\u001b[0m");
+                Console.WriteLine("\u001b[1m\u001b[31m\nZemřel jsi.\u001b[0m");
             }
         }
         public bool IsDead()
