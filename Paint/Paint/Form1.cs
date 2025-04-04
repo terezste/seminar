@@ -19,6 +19,7 @@ namespace Paint
         Point lastPosition;
         string activity = "draw";
         int x1, y1, x2, y2;
+        int opacity;
 
         public Form1()
         {
@@ -35,47 +36,47 @@ namespace Paint
         //BARVY
             private void button8_Click(object sender, EventArgs e)
             {
-                myPen.Color = Color.Red;
+                myPen.Color = Color.FromArgb(opacity, Color.Red);
             }
 
             private void button5_Click(object sender, EventArgs e)
             {
-                myPen.Color = Color.Orange;
+                myPen.Color = Color.FromArgb(opacity, Color.Orange);
             }
 
             private void button2_Click(object sender, EventArgs e)
             {
-                myPen.Color = Color.Yellow;
+                myPen.Color = Color.FromArgb(opacity, Color.Yellow);
             }
 
             private void button9_Click(object sender, EventArgs e)
             {
-                myPen.Color = Color.Green;
+                myPen.Color = Color.FromArgb(opacity, Color.Green);
             }
 
             private void button6_Click(object sender, EventArgs e)
             {
-                myPen.Color = Color.Blue;
+                myPen.Color = Color.FromArgb(opacity, Color.Blue);
             }
 
             private void button3_Click(object sender, EventArgs e)
             {
-                myPen.Color = Color.Purple;
+                myPen.Color = Color.FromArgb(opacity, Color.Purple);
             }
 
             private void button10_Click(object sender, EventArgs e)
             {
-                myPen.Color = Color.HotPink;
+                myPen.Color = Color.FromArgb(opacity, Color.HotPink);
             }
 
             private void button7_Click(object sender, EventArgs e)
             {
-                myPen.Color = Color.SaddleBrown;
+                myPen.Color = Color.FromArgb(opacity, Color.SaddleBrown);
             }
 
             private void button4_Click(object sender, EventArgs e)
             {
-                myPen.Color = Color.Black;
+                myPen.Color = Color.FromArgb(opacity, Color.Black);
             }
 
 
@@ -88,72 +89,82 @@ namespace Paint
         //GUMA
         private void button11_Click(object sender, EventArgs e)
         {
-            myPen.Color = Color.White;
+            myPen.Color = Color.FromArgb(255, Color.White);
         }
 
         //MALOVANI
-            private void panel1_MouseDown(object sender, MouseEventArgs e)
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            mouseDown = true;
+            lastPosition = e.Location;
+            x1 = e.X;
+            y1 = e.Y;
+        }
+
+        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (mouseDown && activity == "draw")
             {
-                mouseDown = true;
+                g.FillEllipse(new SolidBrush(myPen.Color), e.X - (myPen.Width/2), e.Y - (myPen.Width/2), myPen.Width, myPen.Width);                
+                g.DrawLine(myPen, e.Location, lastPosition);
                 lastPosition = e.Location;
-                x1 = e.X;
-                y1 = e.Y;
             }
+        }
 
-            private void panel1_MouseMove(object sender, MouseEventArgs e)
+        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        {
+            mouseDown= false;
+            x2 = e.X;
+            y2 = e.Y;
+
+            if (activity == "drawRectangle")
             {
-                if (mouseDown && activity == "draw")
+                if (x1 > x2)
                 {
-                    g.FillEllipse(new SolidBrush(myPen.Color), e.X - (myPen.Width/2), e.Y - (myPen.Width/2), myPen.Width, myPen.Width);                
-                    g.DrawLine(myPen, e.Location, lastPosition);
-                    lastPosition = e.Location;
+                    (x1, x2) = (x2, x1);
                 }
-            }
+                if (y1 > y2)
+                {
+                    (y1, y2) = (y2, y1);
+                }
+                g.DrawRectangle(myPen, x1, y1, x2 - x1, y2 - y1);
 
-            private void panel1_MouseUp(object sender, MouseEventArgs e)
+            }
+            else if (activity == "drawEllipse")
             {
-                mouseDown= false;
-                x2 = e.X;
-                y2 = e.Y;
-
-                if (activity == "drawRectangle")
-                {
-                    g.DrawRectangle(myPen, x1, y1, x2 - x1, y2 - y1);
-                }
-                else if (activity == "drawEllipse")
-                {
-                    g.DrawEllipse(myPen, x1, y1, x2 - x1, y2 - y1);
-                }
-                else if (activity == "drawLine")
-                {
-                    g.DrawLine(myPen, x1, y1, x2, y2);
+                g.DrawEllipse(myPen, x1, y1, x2 - x1, y2 - y1);
             }
+            else if (activity == "drawLine")
+            {
+                g.DrawLine(myPen, x1, y1, x2, y2);
             }
+        }
 
         //BRUSH
         private void button12_Click(object sender, EventArgs e)
         {
             activity = "draw";
-            myPen.Color = Color.FromArgb(20, myPen.Color);
+            opacity = 20;
+            myPen.Color = Color.FromArgb(opacity, myPen.Color);
         }
 
         //PEN
         private void button13_Click(object sender, EventArgs e)
         {
             activity = "draw";
+            opacity = 255;
             myPen.Color = Color.FromArgb(255, myPen.Color);
         }
 
+        //TVARY
         private void button14_Click(object sender, EventArgs e)
         {
             activity = "drawRectangle";
         }
-
         private void button15_Click(object sender, EventArgs e)
         {
             activity = "drawEllipse";
         }
-
         private void button16_Click(object sender, EventArgs e)
         {
             activity = "drawLine";
@@ -167,6 +178,10 @@ namespace Paint
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
             
+        }
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
