@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics.Tracing;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -13,9 +14,11 @@ namespace Paint
     public partial class Form1 : Form
     {
         Graphics g;
-        Pen myPen = new Pen(Color.Black, 1);
+        Pen myPen = new Pen(Color.Black, 20);
         bool mouseDown = false;
         Point lastPosition;
+        string activity = "draw";
+        int x1, y1, x2, y2;
 
         public Form1()
         {
@@ -23,67 +26,58 @@ namespace Paint
             g = panel1.CreateGraphics();
         }
 
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-            
-        }
-
+        //CLEAR
         private void button1_Click(object sender, EventArgs e)
         {
             panel1.Refresh();
         }
 
         //BARVY
+            private void button8_Click(object sender, EventArgs e)
+            {
+                myPen.Color = Color.Red;
+            }
 
-        private void button8_Click(object sender, EventArgs e)
-        {
-            myPen.Color = Color.Red;
-        }
+            private void button5_Click(object sender, EventArgs e)
+            {
+                myPen.Color = Color.Orange;
+            }
 
-        private void button5_Click(object sender, EventArgs e)
-        {
-            myPen.Color = Color.Orange;
-        }
+            private void button2_Click(object sender, EventArgs e)
+            {
+                myPen.Color = Color.Yellow;
+            }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            myPen.Color = Color.Yellow;
-        }
+            private void button9_Click(object sender, EventArgs e)
+            {
+                myPen.Color = Color.Green;
+            }
 
-        private void button9_Click(object sender, EventArgs e)
-        {
-            myPen.Color = Color.Green;
-        }
+            private void button6_Click(object sender, EventArgs e)
+            {
+                myPen.Color = Color.Blue;
+            }
 
-        private void button6_Click(object sender, EventArgs e)
-        {
-            myPen.Color = Color.Blue;
-        }
+            private void button3_Click(object sender, EventArgs e)
+            {
+                myPen.Color = Color.Purple;
+            }
 
-        private void button3_Click(object sender, EventArgs e)
-        {
-            myPen.Color = Color.Purple;
-        }
+            private void button10_Click(object sender, EventArgs e)
+            {
+                myPen.Color = Color.HotPink;
+            }
 
-        private void button10_Click(object sender, EventArgs e)
-        {
-            myPen.Color = Color.HotPink;
-        }
+            private void button7_Click(object sender, EventArgs e)
+            {
+                myPen.Color = Color.SaddleBrown;
+            }
 
-        private void button7_Click(object sender, EventArgs e)
-        {
-            myPen.Color = Color.SaddleBrown;
-        }
+            private void button4_Click(object sender, EventArgs e)
+            {
+                myPen.Color = Color.Black;
+            }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            myPen.Color = Color.Black;
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
 
         //VELIKOST PERA
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -97,26 +91,82 @@ namespace Paint
             myPen.Color = Color.White;
         }
 
-        private void panel1_MouseDown(object sender, MouseEventArgs e)
-        {
-            //g.DrawEllipse(MousePosition, myPen.width, myPen.width);
-            mouseDown = true;
-            lastPosition = e.Location;
-        }
-
-        private void panel1_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (mouseDown)
+        //MALOVANI
+            private void panel1_MouseDown(object sender, MouseEventArgs e)
             {
-                //g.DrawEllipse(myPen, e.X, e.Y, 1, 1);
-                g.DrawLine(myPen, e.Location, lastPosition);
+                mouseDown = true;
                 lastPosition = e.Location;
+                x1 = e.X;
+                y1 = e.Y;
             }
+
+            private void panel1_MouseMove(object sender, MouseEventArgs e)
+            {
+                if (mouseDown && activity == "draw")
+                {
+                    g.FillEllipse(new SolidBrush(myPen.Color), e.X - (myPen.Width/2), e.Y - (myPen.Width/2), myPen.Width, myPen.Width);                
+                    g.DrawLine(myPen, e.Location, lastPosition);
+                    lastPosition = e.Location;
+                }
+            }
+
+            private void panel1_MouseUp(object sender, MouseEventArgs e)
+            {
+                mouseDown= false;
+                x2 = e.X;
+                y2 = e.Y;
+
+                if (activity == "drawRectangle")
+                {
+                    g.DrawRectangle(myPen, x1, y1, x2 - x1, y2 - y1);
+                }
+                else if (activity == "drawEllipse")
+                {
+                    g.DrawEllipse(myPen, x1, y1, x2 - x1, y2 - y1);
+                }
+                else if (activity == "drawLine")
+                {
+                    g.DrawLine(myPen, x1, y1, x2, y2);
+            }
+            }
+
+        //BRUSH
+        private void button12_Click(object sender, EventArgs e)
+        {
+            activity = "draw";
+            myPen.Color = Color.FromArgb(20, myPen.Color);
         }
 
-        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        //PEN
+        private void button13_Click(object sender, EventArgs e)
         {
-            mouseDown= false;
+            activity = "draw";
+            myPen.Color = Color.FromArgb(255, myPen.Color);
+        }
+
+        private void button14_Click(object sender, EventArgs e)
+        {
+            activity = "drawRectangle";
+        }
+
+        private void button15_Click(object sender, EventArgs e)
+        {
+            activity = "drawEllipse";
+        }
+
+        private void button16_Click(object sender, EventArgs e)
+        {
+            activity = "drawLine";
+        }
+
+        //VSECHNO CO JSEM OMYLEM PROKLIKLA
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            
         }
     }
 }
