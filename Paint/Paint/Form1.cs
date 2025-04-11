@@ -38,47 +38,38 @@ namespace Paint
             {
                 myPen.Color = Color.FromArgb(opacity, Color.Red);
             }
-
             private void button5_Click(object sender, EventArgs e)
             {
                 myPen.Color = Color.FromArgb(opacity, Color.Orange);
             }
-
             private void button2_Click(object sender, EventArgs e)
             {
                 myPen.Color = Color.FromArgb(opacity, Color.Yellow);
             }
-
             private void button9_Click(object sender, EventArgs e)
             {
                 myPen.Color = Color.FromArgb(opacity, Color.Green);
             }
-
             private void button6_Click(object sender, EventArgs e)
             {
                 myPen.Color = Color.FromArgb(opacity, Color.Blue);
             }
-
             private void button3_Click(object sender, EventArgs e)
             {
                 myPen.Color = Color.FromArgb(opacity, Color.Purple);
             }
-
             private void button10_Click(object sender, EventArgs e)
             {
                 myPen.Color = Color.FromArgb(opacity, Color.HotPink);
             }
-
             private void button7_Click(object sender, EventArgs e)
             {
                 myPen.Color = Color.FromArgb(opacity, Color.SaddleBrown);
             }
-
             private void button4_Click(object sender, EventArgs e)
             {
                 myPen.Color = Color.FromArgb(opacity, Color.Black);
             }
-
 
         //VELIKOST PERA
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -89,6 +80,7 @@ namespace Paint
         //GUMA
         private void button11_Click(object sender, EventArgs e)
         {
+            activity = "draw";
             myPen.Color = Color.FromArgb(255, Color.White);
         }
 
@@ -105,7 +97,7 @@ namespace Paint
         {
             if (mouseDown && activity == "draw")
             {
-                g.FillEllipse(new SolidBrush(myPen.Color), e.X - (myPen.Width/2), e.Y - (myPen.Width/2), myPen.Width, myPen.Width);                
+                g.FillEllipse(new SolidBrush(myPen.Color), e.X - (myPen.Width/2), e.Y - (myPen.Width / 2), myPen.Width, myPen.Width);               
                 g.DrawLine(myPen, e.Location, lastPosition);
                 lastPosition = e.Location;
             }
@@ -128,7 +120,6 @@ namespace Paint
                     (y1, y2) = (y2, y1);
                 }
                 g.DrawRectangle(myPen, x1, y1, x2 - x1, y2 - y1);
-
             }
             else if (activity == "drawEllipse")
             {
@@ -137,6 +128,22 @@ namespace Paint
             else if (activity == "drawLine")
             {
                 g.DrawLine(myPen, x1, y1, x2, y2);
+            }
+            else if (activity == "fillRectangle")
+            {
+                if (x1 > x2)
+                {
+                    (x1, x2) = (x2, x1);
+                }
+                if (y1 > y2)
+                {
+                    (y1, y2) = (y2, y1);
+                }
+                g.FillRectangle(new SolidBrush(myPen.Color), x1, y1, x2 - x1, y2 - y1);
+            }
+            else if (activity == "fillEllipse")
+            {
+                g.FillEllipse(new SolidBrush(myPen.Color), x1, y1, x2 - x1, y2 - y1);
             }
         }
 
@@ -147,14 +154,13 @@ namespace Paint
             opacity = 20;
             myPen.Color = Color.FromArgb(opacity, myPen.Color);
         }
-
         //PEN
         private void button13_Click(object sender, EventArgs e)
         {
             activity = "draw";
             opacity = 255;
             myPen.Color = Color.FromArgb(255, myPen.Color);
-        }
+        }       
 
         //TVARY
         private void button14_Click(object sender, EventArgs e)
@@ -169,6 +175,18 @@ namespace Paint
         {
             activity = "drawLine";
         }
+        private void button18_Click(object sender, EventArgs e)
+        {
+            activity = "fillRectangle";
+        }
+        private void button19_Click(object sender, EventArgs e)
+        {
+            activity = "fillEllipse";
+        }
+        private void button20_Click(object sender, EventArgs e)
+        {
+            activity = "drawB";
+        }
 
         //VSECHNO CO JSEM OMYLEM PROKLIKLA
         private void Form1_Load(object sender, EventArgs e)
@@ -180,6 +198,10 @@ namespace Paint
             
         }
         private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+        private void button17_Click(object sender, EventArgs e)
         {
 
         }
