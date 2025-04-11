@@ -27,13 +27,13 @@ namespace Paint
             g = panel1.CreateGraphics();
         }
 
-        //CLEAR
+        //clear
         private void button1_Click(object sender, EventArgs e)
         {
             panel1.Refresh();
         }
 
-        //BARVY
+        //colors
             private void button8_Click(object sender, EventArgs e)
             {
                 myPen.Color = Color.FromArgb(opacity, Color.Red);
@@ -71,20 +71,20 @@ namespace Paint
                 myPen.Color = Color.FromArgb(opacity, Color.Black);
             }
 
-        //VELIKOST PERA
+        //pen width
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
             myPen.Width = (float)numericUpDown1.Value;
         }
 
-        //GUMA
+        //eraser
         private void button11_Click(object sender, EventArgs e)
         {
             activity = "draw";
             myPen.Color = Color.FromArgb(255, Color.White);
         }
 
-        //MALOVANI
+        //drawing
         private void panel1_MouseDown(object sender, MouseEventArgs e)
         {
             mouseDown = true;
@@ -92,7 +92,6 @@ namespace Paint
             x1 = e.X;
             y1 = e.Y;
         }
-
         private void panel1_MouseMove(object sender, MouseEventArgs e)
         {
             if (mouseDown && activity == "draw")
@@ -101,8 +100,32 @@ namespace Paint
                 g.DrawLine(myPen, e.Location, lastPosition);
                 lastPosition = e.Location;
             }
+            else if (mouseDown && activity == "drawCalligraphy")
+            {
+                float XDifference = Math.Abs(e.X - lastPosition.X);
+                float YDifference = Math.Abs(e.Y - lastPosition.Y);
+                if (YDifference > XDifference)
+                {
+                    g.FillEllipse(new SolidBrush(myPen.Color), e.X - (myPen.Width * 0.6f / 2), e.Y - (myPen.Width / 2), myPen.Width * 0.6f, myPen.Width);
+                }
+                else 
+                {
+                    g.FillEllipse(new SolidBrush(myPen.Color), e.X - (myPen.Width / 2), e.Y - (myPen.Width / 2), myPen.Width, myPen.Width);
+                }
+                lastPosition = e.Location;
+            }
+            else if (mouseDown && activity == "drawChalk")
+            {
+                for (int i = 0; i < myPen.Width; i += 4)
+                {
+                    for (int j = 0; j < myPen.Width; j += 4)
+                    {
+                        g.FillEllipse(new SolidBrush(myPen.Color), e.X - myPen.Width / 2 + i, e.Y - myPen.Width / 2 + j, 2, 2);
+                    }
+                }
+                lastPosition = e.Location;
+            }
         }
-
         private void panel1_MouseUp(object sender, MouseEventArgs e)
         {
             mouseDown= false;
@@ -145,32 +168,47 @@ namespace Paint
             {
                 g.FillEllipse(new SolidBrush(myPen.Color), x1, y1, x2 - x1, y2 - y1);
             }
-            else if (activity == "imageStar")
+            //pictures
+            /*else if (activity == "imageStar")
             {
                 g.DrawImage(Properties.Resources.dog, x1, y1, x2, y2);
             }
             else if (activity == "imageHeart")
             {
                 g.DrawImage(Properties.Resources.cat, x1, y1, x2, y2);
-            }
+            }*/
         }
 
-        //BRUSH
+        //brush
         private void button12_Click(object sender, EventArgs e)
         {
             activity = "draw";
             opacity = 20;
             myPen.Color = Color.FromArgb(opacity, myPen.Color);
         }
-        //PEN
+        //pen
         private void button13_Click(object sender, EventArgs e)
         {
             activity = "draw";
             opacity = 255;
             myPen.Color = Color.FromArgb(255, myPen.Color);
-        }       
+        }
+        //calligraphy pen
+        private void button21_Click(object sender, EventArgs e)
+        {
+            activity = "drawCalligraphy";
+            opacity = 255;
+            myPen.Color = Color.FromArgb(opacity, myPen.Color);
+        }
+        //chalk
+        private void button22_Click(object sender, EventArgs e)
+        {
+            activity = "drawChalk";
+            opacity = 120;
+            myPen.Color = Color.FromArgb(opacity, myPen.Color);
+        }
 
-        //TVARY
+        //shapes
         private void button14_Click(object sender, EventArgs e)
         {
             activity = "drawRectangle";
@@ -191,10 +229,6 @@ namespace Paint
         {
             activity = "fillEllipse";
         }
-        private void button20_Click(object sender, EventArgs e)
-        {
-            activity = "drawB";
-        }
         private void button17_Click_1(object sender, EventArgs e)
         {
             activity = "imageDog";
@@ -205,7 +239,7 @@ namespace Paint
         }
 
 
-        //VSECHNO CO JSEM OMYLEM PROKLIKLA
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
