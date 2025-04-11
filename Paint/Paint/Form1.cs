@@ -145,6 +145,14 @@ namespace Paint
             {
                 g.FillEllipse(new SolidBrush(myPen.Color), x1, y1, x2 - x1, y2 - y1);
             }
+            else if (activity == "imageStar")
+            {
+                g.DrawImage(Properties.Resources.dog, x1, y1, x2, y2);
+            }
+            else if (activity == "imageHeart")
+            {
+                g.DrawImage(Properties.Resources.cat, x1, y1, x2, y2);
+            }
         }
 
         //BRUSH
@@ -187,6 +195,15 @@ namespace Paint
         {
             activity = "drawB";
         }
+        private void button17_Click_1(object sender, EventArgs e)
+        {
+            activity = "imageDog";
+        }
+        private void button20_Click_1(object sender, EventArgs e)
+        {
+            activity = "imageCat";
+        }
+
 
         //VSECHNO CO JSEM OMYLEM PROKLIKLA
         private void Form1_Load(object sender, EventArgs e)
